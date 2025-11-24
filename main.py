@@ -116,6 +116,7 @@ class CRUDApp:
             text="✏️ ACTUALIZAR",
             bg='#f39c12',
             fg='white',
+            command=self.actualizar_usuario,
             **button_config
         ).pack(side=tk.LEFT, padx=10)
         
@@ -348,6 +349,34 @@ def seleccionar_registro(self, event):
             self.email_entry.insert(0, valores[2])
             telefono = valores[3] if valores[3] != "N/A" else ""
             self.telefono_entry.insert(0, telefono)
+            
+def actualizar_usuario(self):
+        """Actualizar información de un usuario existente"""
+        usuario_id = self.id_entry.get().strip()
+        nombre = self.nombre_entry.get().strip()
+        email = self.email_entry.get().strip()
+        telefono = self.telefono_entry.get().strip()
+        
+        if not usuario_id:
+            messagebox.showwarning("Campo vacío", "Ingrese un ID para actualizar")
+            self.id_entry.focus()
+            return
+        
+        if not nombre or not email:
+            messagebox.showwarning("Campos vacíos", "Nombre y Email son obligatorios")
+            return
+        
+        # Validar email
+        if '@' not in email or '.' not in email:
+            messagebox.showwarning("Email inválido", "Por favor ingrese un email válido")
+            return
+        
+        if self.db.actualizar_usuario(usuario_id, nombre, email, telefono):
+            messagebox.showinfo("Éxito", f"Usuario '{nombre}' actualizado correctamente")
+            self.limpiar_campos()
+            self.cargar_usuarios()
+        else:
+            messagebox.showerror("Error", f"No existe usuario con ID '{usuario_id}'")
             
             
 if __name__ == "__main__":
