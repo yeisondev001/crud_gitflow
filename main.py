@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from database import Database 
 
 
 class CRUDApp:
@@ -10,6 +11,9 @@ class CRUDApp:
         self.root.title("CRUD de Usuarios - SQLite")
         self.root.geometry("900x600")
         self.root.resizable(False, False)
+         
+         # Inicializar base de datos
+        self.db = Database()
         
         # Crear interfaz
         self.crear_interfaz()
