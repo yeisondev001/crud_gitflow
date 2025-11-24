@@ -102,3 +102,35 @@ def buscar_usuario_por_id(self, id: str) -> Optional[Tuple]:
         
         conn.close()
         return usuario
+    
+def actualizar_usuario(self, id: str, nombre: str, email: str, telefono: str = "") -> bool:
+        """
+        Actualizar información de un usuario existente
+        
+        Args:
+            id: ID del usuario a actualizar
+            nombre: Nuevo nombre
+            email: Nuevo email
+            telefono: Nuevo teléfono
+        
+        Returns:
+            bool: True si se actualizó correctamente, False si no existe
+        """
+        try:
+            conn = self.conectar()
+            cursor = conn.cursor()
+            
+            cursor.execute('''
+                UPDATE usuarios
+                SET nombre = ?, email = ?, telefono = ?
+                WHERE id = ?
+            ''', (nombre, email, telefono, id))
+            
+            filas_afectadas = cursor.rowcount
+            conn.commit()
+            conn.close()
+            
+            return filas_afectadas > 0
+        except Exception as e:
+            print(f"Error al actualizar usuario: {e}")
+            return False
