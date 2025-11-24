@@ -107,6 +107,7 @@ class CRUDApp:
             text="🔍 BUSCAR",
             bg='#3498db',
             fg='white',
+            command=self.buscar_usuario,
             **button_config
         ).pack(side=tk.LEFT, padx=10)
         
@@ -167,6 +168,9 @@ class CRUDApp:
         self.tabla.column("Fecha", width=150, anchor='center')
         
         self.tabla.pack(fill=tk.BOTH, expand=True)
+        
+        # Evento de clic en tabla
+        self.tabla.bind('<ButtonRelease-1>', self.seleccionar_registro) 
         
         # Estilo de la tabla
         style = ttk.Style()
@@ -304,6 +308,48 @@ def cargar_usuarios(self):
                 usuario[3] if usuario[3] else "N/A",  # Teléfono
                 fecha  # Fecha
             ))
+            
+def buscar_usuario(self):
+        """Buscar un usuario por ID"""
+        usuario_id = self.id_entry.get().strip()
+        
+        if not usuario_id:
+            messagebox.showwarning("Campo vacío", "Ingrese un ID para buscar")
+            self.id_entry.focus()
+            return
+        
+        usuario = self.db.buscar_usuario_por_id(usuario_id)
+        
+        if usuario:
+            # Limpiar campos primero
+            self.limpiar_campos()
+            
+            # Llenar campos con datos encontrados
+            self.id_entry.insert(0, usuario[0])
+            self.nombre_entry.insert(0, usuario[1])
+            self.email_entry.insert(0, usuario[2])
+            self.telefono_entry.insert(0, usuario[3] if usuario[3] else "")
+            
+            messagebox.showinfo("Usuario encontrado", f"Usuario '{usuario[1]}' encontrado")
+        else:
+            messagebox.showerror("No encontrado", f"No existe usuario con ID '{usuario_id}'")
+    
+def seleccionar_registro(self, event):
+        """Seleccionar un registro de la tabla al hacer clic"""
+        seleccion = self.tabla.selection()
+        if seleccion:
+            item = self.tabla.item(seleccion[0])
+            valores = item['values']
+            
+            # Limpiar y llenar campos
+            self.limpiar_campos()
+            self.id_entry.insert(0, valores[0])
+            self.nombre_entry.insert(0, valores[1])
+            self.email_entry.insert(0, valores[2])
+            telefono = valores[3] if valores[3] != "N/A" else ""
+            self.telefono_entry.insert(0, telefono)
+            
+            
 if __name__ == "__main__":
     root = tk.Tk()
     app = CRUDApp(root)
