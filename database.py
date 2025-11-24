@@ -36,7 +36,8 @@ class Database:
         """Cerrar conexión a la base de datos"""
         if conn:
             conn.close()
-def crear_usuario(self, id: str, nombre: str, email: str, telefono: str = "") -> bool:
+    
+    def crear_usuario(self, id: str, nombre: str, email: str, telefono: str = "") -> bool:
         """
         Crear un nuevo usuario en la base de datos
         
@@ -68,7 +69,7 @@ def crear_usuario(self, id: str, nombre: str, email: str, telefono: str = "") ->
             print(f"Error al crear usuario: {e}")
             return False
     
-def obtener_todos_usuarios(self) -> List[Tuple]:
+    def obtener_todos_usuarios(self) -> List[Tuple]:
         """
         Obtener todos los usuarios de la base de datos
         
@@ -84,7 +85,7 @@ def obtener_todos_usuarios(self) -> List[Tuple]:
         conn.close()
         return usuarios
     
-def buscar_usuario_por_id(self, id: str) -> Optional[Tuple]:
+    def buscar_usuario_por_id(self, id: str) -> Optional[Tuple]:
         """
         Buscar un usuario específico por ID
         
@@ -103,7 +104,7 @@ def buscar_usuario_por_id(self, id: str) -> Optional[Tuple]:
         conn.close()
         return usuario
     
-def actualizar_usuario(self, id: str, nombre: str, email: str, telefono: str = "") -> bool:
+    def actualizar_usuario(self, id: str, nombre: str, email: str, telefono: str = "") -> bool:
         """
         Actualizar información de un usuario existente
         
@@ -133,4 +134,29 @@ def actualizar_usuario(self, id: str, nombre: str, email: str, telefono: str = "
             return filas_afectadas > 0
         except Exception as e:
             print(f"Error al actualizar usuario: {e}")
+            return False
+
+    def eliminar_usuario(self, id: str) -> bool:
+        """
+        Eliminar un usuario de la base de datos
+        
+        Args:
+            id: ID del usuario a eliminar
+        
+        Returns:
+            bool: True si se eliminó correctamente, False si no existe
+        """
+        try:
+            conn = self.conectar()
+            cursor = conn.cursor()
+            
+            cursor.execute('DELETE FROM usuarios WHERE id = ?', (id,))
+            
+            filas_afectadas = cursor.rowcount
+            conn.commit()
+            conn.close()
+            
+            return filas_afectadas > 0
+        except Exception as e:
+            print(f"Error al eliminar usuario: {e}")
             return False
