@@ -83,3 +83,22 @@ def obtener_todos_usuarios(self) -> List[Tuple]:
         
         conn.close()
         return usuarios
+    
+def buscar_usuario_por_id(self, id: str) -> Optional[Tuple]:
+        """
+        Buscar un usuario específico por ID
+        
+        Args:
+            id: ID del usuario a buscar
+        
+        Returns:
+            Optional[Tuple]: Tupla con datos del usuario o None si no existe
+        """
+        conn = self.conectar()
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT id, nombre, email, telefono, fecha_creacion FROM usuarios WHERE id = ?', (id,))
+        usuario = cursor.fetchone()
+        
+        conn.close()
+        return usuario
