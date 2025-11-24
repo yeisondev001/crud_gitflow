@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk, messagebox 
 from tkinter import ttk
 from database import Database 
 
@@ -17,6 +18,7 @@ class CRUDApp:
         
         # Crear interfaz
         self.crear_interfaz()
+        self.cargar_usuarios() 
     
     def crear_interfaz(self):
         """Crear elementos de la interfaz"""
@@ -96,6 +98,7 @@ class CRUDApp:
             text="➕ CREAR",
             bg='#27ae60',
             fg='white',
+            command=self.crear_usuario,
             **button_config
         ).pack(side=tk.LEFT, padx=10)
         
@@ -183,7 +186,124 @@ class CRUDApp:
         self.telefono_entry.delete(0, tk.END)
         self.id_entry.focus()
 
-
+def crear_usuario(self):
+        """Crear un nuevo usuario en la base de datos"""
+        # Obtener valores
+        usuario_id = self.id_entry.get().strip()
+        nombre = self.nombre_entry.get().strip()
+        email = self.email_entry.get().strip()
+        telefono = self.telefono_entry.get().strip()
+        
+        # Validaciones
+        if not usuario_id:
+            messagebox.showwarning("Campo vacío", "El ID es obligatorio")
+            self.id_entry.focus()
+            return
+        
+        if not nombre:
+            messagebox.showwarning("Campo vacío", "El nombre es obligatorio")
+            self.nombre_entry.focus()
+            return
+        
+        if not email:
+            messagebox.showwarning("Campo vacío", "El email es obligatorio")
+            self.email_entry.focus()
+            return
+        
+        # Validar formato de email básico
+        if '@' not in email or '.' not in email:
+            messagebox.showwarning("Email inválido", "Por favor ingrese un email válido")
+            self.email_entry.focus()
+            return
+        
+        # Intentar crear usuario
+        if self.db.crear_usuario(usuario_id, nombre, email, telefono):
+            messagebox.showinfo("Éxito", f"Usuario '{nombre}' creado correctamente")
+            self.limpiar_campos()
+            self.cargar_usuarios()
+        else:
+            messagebox.showerror("Error", f"El ID '{usuario_id}' ya existe en la base de datos")
+            self.id_entry.focus()
+    
+def cargar_usuarios(self):
+        """Cargar todos los usuarios en la tabla"""
+        # Limpiar tabla
+        for item in self.tabla.get_children():
+            self.tabla.delete(item)
+        
+        # Obtener usuarios de la BD
+        usuarios = self.db.obtener_todos_usuarios()
+        
+        # Insertar en la tabla
+        for usuario in usuarios:
+            # usuario = (id, nombre, email, telefono, fecha_creacion)
+            fecha = usuario[4][:19] if usuario[4] else ""  # Formato fecha
+            self.tabla.insert('', tk.END, values=(
+                usuario[0],  # ID
+                usuario[1],  # Nombre
+                usuario[2],  # Email
+                usuario[3] if usuario[3] else "N/A",  # Teléfono
+                fecha  # Fecha
+            ))
+def crear_usuario(self):
+        """Crear un nuevo usuario en la base de datos"""
+        # Obtener valores
+        usuario_id = self.id_entry.get().strip()
+        nombre = self.nombre_entry.get().strip()
+        email = self.email_entry.get().strip()
+        telefono = self.telefono_entry.get().strip()
+        
+        # Validaciones
+        if not usuario_id:
+            messagebox.showwarning("Campo vacío", "El ID es obligatorio")
+            self.id_entry.focus()
+            return
+        
+        if not nombre:
+            messagebox.showwarning("Campo vacío", "El nombre es obligatorio")
+            self.nombre_entry.focus()
+            return
+        
+        if not email:
+            messagebox.showwarning("Campo vacío", "El email es obligatorio")
+            self.email_entry.focus()
+            return
+        
+        # Validar formato de email básico
+        if '@' not in email or '.' not in email:
+            messagebox.showwarning("Email inválido", "Por favor ingrese un email válido")
+            self.email_entry.focus()
+            return
+        
+        # Intentar crear usuario
+        if self.db.crear_usuario(usuario_id, nombre, email, telefono):
+            messagebox.showinfo("Éxito", f"Usuario '{nombre}' creado correctamente")
+            self.limpiar_campos()
+            self.cargar_usuarios()
+        else:
+            messagebox.showerror("Error", f"El ID '{usuario_id}' ya existe en la base de datos")
+            self.id_entry.focus()
+    
+def cargar_usuarios(self):
+        """Cargar todos los usuarios en la tabla"""
+        # Limpiar tabla
+        for item in self.tabla.get_children():
+            self.tabla.delete(item)
+        
+        # Obtener usuarios de la BD
+        usuarios = self.db.obtener_todos_usuarios()
+        
+        # Insertar en la tabla
+        for usuario in usuarios:
+            # usuario = (id, nombre, email, telefono, fecha_creacion)
+            fecha = usuario[4][:19] if usuario[4] else ""  # Formato fecha
+            self.tabla.insert('', tk.END, values=(
+                usuario[0],  # ID
+                usuario[1],  # Nombre
+                usuario[2],  # Email
+                usuario[3] if usuario[3] else "N/A",  # Teléfono
+                fecha  # Fecha
+            ))
 if __name__ == "__main__":
     root = tk.Tk()
     app = CRUDApp(root)
